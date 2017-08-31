@@ -1,8 +1,9 @@
 module BHLHandleVerifier
   def before_save
     super
-    if self.file_uri && /2027\.42\/\d*/.match(self.file_uri) && !self.file_uri.start_with?("https://hdl.handle.net")
-      handle = /2027\.42\/\d*/.match(self.file_uri)[0]
+    non_hdl_handle_regex = /(?<!^https:\/\/hdl.handle\.net\/)2027\.42\/\d*$/
+    if self.file_uri && non_hdl_handle_regex.match(self.file_uri.strip)
+      handle = non_hdl_handle_regex.match(self.file_uri.strip)[0]
       self.file_uri = "https://hdl.handle.net/" + handle
     end
   end
